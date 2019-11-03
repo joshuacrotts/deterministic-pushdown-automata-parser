@@ -1,3 +1,4 @@
+package dpda;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,6 +9,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import view.MainWindow;
 
 /**
  * This class acts as the driver class for testing DPDAs.
@@ -16,13 +18,15 @@ import java.util.logging.Logger;
  */
 public class DPDAParser
 {
+
     private static BufferedReader lineReader;
-    private static Scanner keyboard = new Scanner(System.in);
+    private static Scanner keyboard = new Scanner( System.in );
 
     public static void main ( String[] args )
     {
         DPDA dpda = createDPDA( "dpda1.txt" );
-        System.out.println( "Alphabet is: "  + Arrays.toString(dpda.getAlphabet() ) );
+        MainWindow mainWindow = new MainWindow( dpda );
+        System.out.println( "Alphabet is: " + Arrays.toString( dpda.getAlphabet() ) );
         System.out.print( "Enter your string: " );
         String str = keyboard.nextLine();
         if ( dpda.acceptsString( str ) )
@@ -145,7 +149,7 @@ public class DPDAParser
 
                 //  Get the state from the DPDA and add its transition values.
                 State state = dpda.getStateObject( currentStateID );
-                state.addTransition( currentStateID , nextStateID , inputSymbol , popSymbol , pushSymbol );
+                state.addTransition( dpda , currentStateID , nextStateID , inputSymbol , popSymbol , pushSymbol );
             }
             while ( !line.contains( "Transitions end" ) );
 
@@ -217,6 +221,7 @@ public class DPDAParser
         for ( String _stateString : stateString )
         {
             finalStates.add( dpda.getStateObject( Integer.parseInt( _stateString ) ) );
+            dpda.getStateObject( Integer.parseInt( _stateString ) ).setFinal( true );
         }
 
         return finalStates;

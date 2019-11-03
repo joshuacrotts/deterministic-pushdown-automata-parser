@@ -1,6 +1,8 @@
+package dpda;
 
 import java.util.ArrayList;
 import java.util.List;
+import model.CircleComponent;
 
 /**
  * This class represents a state for the DPDA algorithm.
@@ -9,18 +11,23 @@ import java.util.List;
  */
 public class State
 {
-    private int              stateID     = -1;
-    private boolean          isFinal     = false;
+
+    private int stateID = -1;
+    private boolean isFinal = false;
     private List<Transition> transitions = null;
+    private boolean currentState = false;
+
+    private CircleComponent circleComp = null;
 
     public State ( int stateID )
     {
         this.transitions = new ArrayList<>();
-        this.stateID     = stateID;
+        this.stateID = stateID;
     }
 
     /**
      * Adds a transition to the list of transitions for this respective state.
+     *
      * @param fromState
      * @param toState
      * @param inputSymbol
@@ -28,15 +35,17 @@ public class State
      * @param pushChar
      * @return
      */
-    public State addTransition ( int fromState, int toState, char inputSymbol, char popChar, char pushChar )
+    public State addTransition ( DPDA dpda , int fromState , int toState , char inputSymbol , char popChar , char pushChar )
     {
-        this.transitions.add( new Transition( fromState, toState, inputSymbol, popChar, pushChar ) );
+        this.transitions.add( new Transition( dpda , fromState , toState , inputSymbol , popChar , pushChar ) );
         return this;
     }
 
     /**
-     * Retrieves the next transition object for a specific input symbol and char.
-     * Both have to match one of the transitions inside of the list of transitions.
+     * Retrieves the next transition object for a specific input symbol and
+     * char. Both have to match one of the transitions inside of the list of
+     * transitions.
+     *
      * @param inputSymbol
      * @param popChar
      * @return
@@ -64,14 +73,24 @@ public class State
         this.stateID = _stateID;
     }
 
-    public boolean isIsFinal ()
+    public boolean isFinal ()
     {
         return isFinal;
     }
 
-    public void setIsFinal ( boolean _isFinal )
+    public void setFinal ( boolean _isFinal )
     {
         this.isFinal = _isFinal;
+    }
+
+    public void setCurrent ( boolean b )
+    {
+        this.currentState = b;
+    }
+
+    public boolean isCurrent ()
+    {
+        return this.currentState;
     }
 
     public List<Transition> getTransitions ()
@@ -82,6 +101,16 @@ public class State
     public void setTransitions ( List<Transition> _transitions )
     {
         this.transitions = _transitions;
+    }
+
+    public void setCircleComponent ( CircleComponent comp )
+    {
+        this.circleComp = comp;
+    }
+
+    public CircleComponent getCircleComponent ()
+    {
+        return this.circleComp;
     }
 
 }
