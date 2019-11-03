@@ -19,7 +19,10 @@ public class StackView
 
     private final MainWindow mainFrame;
     private final int bottomStackXPos = 40;
-    private final int bottomStackYPos = 700;
+    private final int bottomStackYPos = 600;
+    
+    private final int stackXPos = 20;
+    private final int stackYPos = 400;
 
     public StackView ( MainWindow mainFrame )
     {
@@ -31,7 +34,7 @@ public class StackView
         Graphics2D g2 = ( Graphics2D ) g;
         g2.setColor( Color.BLACK );
 
-        g2.drawRect( 20 , 400 , 60 , 300 );
+        g2.drawRect( stackXPos , stackYPos , bottomStackXPos + stackXPos , stackYPos - 120 );
         this.drawStackElements( g );
     }
 

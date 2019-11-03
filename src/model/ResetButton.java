@@ -15,14 +15,14 @@ import view.MainWindow;
  *
  * @author Joshua
  */
-public class StepButton extends JButton implements ActionListener
+public class ResetButton extends JButton implements ActionListener
 {
 
     private MainWindow mainWindow;
 
-    public StepButton ( MainWindow window )
+    public ResetButton ( MainWindow window )
     {
-        super.setText( "Next Step" );
+        super.setText( "Reset Diagram" );
         this.mainWindow = window;
         this.addActionListener( this );
     }
@@ -30,8 +30,7 @@ public class StepButton extends JButton implements ActionListener
     @Override
     public void actionPerformed ( ActionEvent _e )
     {
-        this.mainWindow.dpda.stepString();
+        this.mainWindow.dpda.resetDPDA();
         this.mainWindow.drawingPanel.repaint();
-        this.mainWindow.transitionPanel.repaint();
     }
 }

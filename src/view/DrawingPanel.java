@@ -36,11 +36,12 @@ public class DrawingPanel extends JPanel
     public void paintComponent ( Graphics g )
     {
         super.paintComponent( g );
+        this.drawTransitions( g );
+
         for ( int i = 0 ; i < this.circles.size() ; i++ )
         {
             this.circles.get( i ).paintComponent( g );
         }
-        this.drawTransitions( g );
         this.stackView.paintComponent( g );
     }
 
@@ -53,11 +54,13 @@ public class DrawingPanel extends JPanel
             {
                 return;
             }
-            System.out.println( "No trans for st " + ( i + 1 ) +": " + transitions.size() );
             for ( int t = 0 ; t < transitions.size() ; t++ )
             {
+                if ( transitions.size() > 1 && transitions.get( t ).getYOffset() == 0 && t != 0 )
+                {
+                    transitions.get( t ).setYOffset( transitions.get( t ).getYOffset() + 20 );
+                }
                 transitions.get( t ).paintComponent( g );
-                transitions.get( t ).setYOffset( transitions.get( t ).getYOffset() + 100);
             }
         }
     }

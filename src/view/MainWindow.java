@@ -12,10 +12,12 @@ import java.awt.Graphics;
  */
 public class MainWindow extends JFrame
 {
+
     public DPDA dpda;
 
     public ButtonPanel buttonPanel;
     public DrawingPanel drawingPanel;
+    public TransitionPanel transitionPanel;
 
     private static final int width = 800;
     private static final int height = 800;
@@ -25,7 +27,9 @@ public class MainWindow extends JFrame
         this.dpda = dpda;
         this.buttonPanel = new ButtonPanel( this );
         this.drawingPanel = new DrawingPanel( this );
+        this.transitionPanel = new TransitionPanel( this );
 
+        this.add( this.transitionPanel , BorderLayout.PAGE_START );
         this.add( this.drawingPanel , BorderLayout.CENTER );
         this.add( this.buttonPanel , BorderLayout.PAGE_END );
 

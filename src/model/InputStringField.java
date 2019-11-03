@@ -12,7 +12,6 @@ import view.MainWindow;
  */
 public class InputStringField extends JTextField implements KeyListener
 {
-
     private MainWindow mainFrame;
     private ButtonPanel buttonPanel;
 
@@ -33,6 +32,7 @@ public class InputStringField extends JTextField implements KeyListener
         if ( e.getKeyCode() == KeyEvent.VK_ENTER )
         {
             this.mainFrame.dpda.inputString = this.getText();
+            System.out.println( "Setting the string" );
         }
     }
 

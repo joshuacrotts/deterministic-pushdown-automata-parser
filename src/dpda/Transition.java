@@ -22,6 +22,7 @@ public class Transition
     private final char inputSymbol;
     private final char popChar;
     private final char pushChar;
+    private boolean visited = false;
 
     private int yOffset = 0;
 
@@ -38,7 +39,7 @@ public class Transition
     public void paintComponent ( Graphics g )
     {
         Graphics2D g2 = ( Graphics2D ) g;
-        g2.setColor( Color.BLACK );
+        g2.setColor( this.visited ? Color.BLUE : Color.BLACK );
 
         CircleComponent srcState = this.dpda.getStateObject( fromState ).getCircleComponent();
         CircleComponent destState = this.dpda.getStateObject( toStateID ).getCircleComponent();
@@ -87,6 +88,16 @@ public class Transition
     public void setYOffset ( int y )
     {
         this.yOffset += y;
+    }
+
+    public boolean isVisited ()
+    {
+        return this.visited;
+    }
+
+    public void setVisited ( boolean v )
+    {
+        this.visited = v;
     }
 
     @Override
