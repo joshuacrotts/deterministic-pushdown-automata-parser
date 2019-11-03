@@ -1,0 +1,22 @@
+% INPUT (See Figure 2.15 on Page 115 of textbook).
+% Another state and transitions have been added to make it a DPDA.
+% Stack alphabet is implied.
+% Transition format:
+% current-state input-symbol top-of-stack next-state push-onto-stack
+Number of states: 5
+Alphabet: 0 1
+Transitions begin
+1 e e 2 $
+2 0 e 2 0
+2 1 0 3 e
+2 1 $ 5 e
+3 1 0 3 e
+3 e $ 4 e
+3 0 0 5 e
+4 0 e 5 e
+4 1 e 5 e
+5 0 e 5 e
+5 1 e 5 e
+Transitions end
+Start state: 1
+Accept states: 1 4
