@@ -2,6 +2,7 @@ package model;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 import javax.swing.JTextField;
 import view.ButtonPanel;
 import view.MainWindow;
@@ -27,7 +28,7 @@ public class InputStringField extends JTextField implements MouseListener
         this.buttonPanel = buttonPanel;
 
         this.addMouseListener( this );
-        this.setText( "Input String" );
+        this.setText( "Input String, Alphabet: " + Arrays.toString( mainFrame.getDpda().getAlphabet() ) );
         this.setColumns( COLUMNS );
         this.setVisible( true );
     }

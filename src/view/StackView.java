@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -39,6 +40,7 @@ public class StackView
         Font oldFont = g2.getFont();
         g2.setFont( new Font( "Arial", Font.TRUETYPE_FONT, 15 ) );
         g2.drawString( "STACK", stackXPos + ( stackXPos + bottomStackXPos ) / 8, stackYPos - 10 );
+        g2.setStroke( new BasicStroke(3));
         g2.drawRect( stackXPos, stackYPos, bottomStackXPos + stackXPos, bottomStackYPos );
     }
 

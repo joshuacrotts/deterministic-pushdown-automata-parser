@@ -20,11 +20,10 @@ public class DPDAParser
 
     public static void main ( String[] args )
     {
-        DPDA dpda = createDPDA( "dpda1.txt" );
-        MainWindow mainWindow = new MainWindow( dpda );
+        MainWindow mainWindow = new MainWindow();
     }
 
-    private static DPDA createDPDA ( String fileName )
+    public static DPDA createDPDA ( String fileName )
     {
         if ( !openFile( fileName ) )
         {

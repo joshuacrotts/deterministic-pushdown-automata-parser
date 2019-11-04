@@ -117,10 +117,14 @@ public class DPDA
             }
         }
 
-        //  If none of the rules above are satisifed, we automatically reject.
+        //  If none of the rules above are satisifed, we automatically reject,
+        //  we also indicate to the GUI that the charPos is at the end of the string,
+        //  and thus cannot proceed any further.
         if ( !accepts )
         {
             System.out.println( "Not accepted." );
+            this.setCharPos( this.inputString.length() );
+
             return false;
         }
 

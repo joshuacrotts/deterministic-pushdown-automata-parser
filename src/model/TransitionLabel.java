@@ -35,7 +35,7 @@ public class TransitionLabel extends JLabel
         }
         else
         {
-            this.setText( "Transition: " + this.mainWindow.getDpda().getCurrTrans() );
+            this.setText( "" + this.mainWindow.getDpda().getCurrTrans() );
         }
     }
 

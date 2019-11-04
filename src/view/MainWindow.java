@@ -3,7 +3,10 @@ package view;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import dpda.DPDA;
+import dpda.DPDAParser;
 import java.awt.Dimension;
+import java.awt.TrayIcon.MessageType;
+import javax.swing.JOptionPane;
 
 /**
  * This class is the core window/frame where all the JPanels are added to.
@@ -15,18 +18,30 @@ public class MainWindow extends JFrame
     private static final int height = 800;
     private static final int width = 800;
 
-    private ButtonPanel buttonPanel;
     private DPDA dpda;
+    private ButtonPanel buttonPanel;
     private DrawingPanel drawingPanel;
     private TransitionPanel transitionPanel;
 
-    public MainWindow ( DPDA dpda )
+    private final DPDAFileChooser fileChooser;
+
+    public MainWindow ()
     {
-        this.dpda = dpda;
+        this.fileChooser = new DPDAFileChooser( this );
+        this.dpda = DPDAParser.createDPDA( this.fileChooser.openFile().getName() );
+
+        if ( dpda == null )
+        {
+            JOptionPane.showMessageDialog( this, "This file cannot be used.", "Error!", JOptionPane.ERROR_MESSAGE );
+            System.exit( 1 );
+        }
+
+        //  Instantiate the JPanes
         this.buttonPanel = new ButtonPanel( this );
         this.drawingPanel = new DrawingPanel( this );
         this.transitionPanel = new TransitionPanel( this );
 
+        //  Add the JPanes to the parent JFrame.
         this.add( this.transitionPanel, BorderLayout.PAGE_START );
         this.add( this.drawingPanel, BorderLayout.CENTER );
         this.add( this.buttonPanel, BorderLayout.PAGE_END );
@@ -35,6 +50,7 @@ public class MainWindow extends JFrame
         this.setMinimumSize( new Dimension( width, height ) );
         this.setPreferredSize( new Dimension( width, height ) );
 
+        this.setTitle( "Deterministic Pushdown Automata Parser" );
         this.setDefaultCloseOperation( 3 );
         this.setLocationRelativeTo( null );
         this.setVisible( true );
