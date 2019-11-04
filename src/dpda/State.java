@@ -11,12 +11,11 @@ import model.CircleComponent;
  */
 public class State
 {
-
     private int stateID = -1;
     private boolean isFinal = false;
-    private List<Transition> transitions = null;
     private boolean currentState = false;
 
+    private List<Transition> transitions = null;
     private CircleComponent circleComp = null;
 
     public State ( int stateID )
@@ -28,6 +27,7 @@ public class State
     /**
      * Adds a transition to the list of transitions for this respective state.
      *
+     * @param dpda
      * @param fromState
      * @param toState
      * @param inputSymbol
@@ -35,9 +35,9 @@ public class State
      * @param pushChar
      * @return
      */
-    public State addTransition ( DPDA dpda , int fromState , int toState , char inputSymbol , char popChar , char pushChar )
+    public State addTransition ( DPDA dpda, int fromState, int toState, char inputSymbol, char popChar, char pushChar )
     {
-        this.transitions.add( new Transition( dpda , fromState , toState , inputSymbol , popChar , pushChar ) );
+        this.transitions.add( new Transition( dpda, fromState, toState, inputSymbol, popChar, pushChar ) );
         return this;
     }
 
@@ -50,7 +50,7 @@ public class State
      * @param popChar
      * @return
      */
-    public Transition getNextTransition ( int inputSymbol , char popChar )
+    public Transition getNextTransition ( int inputSymbol, char popChar )
     {
         for ( int i = 0 ; i < transitions.size() ; i++ )
         {

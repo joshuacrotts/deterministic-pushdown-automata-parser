@@ -1,48 +1,61 @@
 package model;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.JTextField;
 import view.ButtonPanel;
 import view.MainWindow;
 
 /**
+ * This class represents the text field where the user inputs their string to
+ * test on the DPDA.
+ *
+ * Upon clicking/pressing the mouse button, the text field is cleared.
  *
  * @author Joshua
  */
-public class InputStringField extends JTextField implements KeyListener
+public class InputStringField extends JTextField implements MouseListener
 {
-    private MainWindow mainFrame;
-    private ButtonPanel buttonPanel;
+    private final MainWindow mainFrame;
+    private final ButtonPanel buttonPanel;
 
-    public InputStringField ( MainWindow mainFrame , ButtonPanel buttonPanel )
+    private final int COLUMNS = 20;
+
+    public InputStringField ( MainWindow mainFrame, ButtonPanel buttonPanel )
     {
         this.mainFrame = mainFrame;
         this.buttonPanel = buttonPanel;
 
-        this.addKeyListener( this );
+        this.addMouseListener( this );
         this.setText( "Input String" );
-        this.setColumns( 40 );
+        this.setColumns( COLUMNS );
         this.setVisible( true );
     }
 
     @Override
-    public void keyPressed ( KeyEvent e )
+    public void mouseClicked ( MouseEvent _e )
     {
-        if ( e.getKeyCode() == KeyEvent.VK_ENTER )
-        {
-            this.mainFrame.dpda.inputString = this.getText();
-            System.out.println( "Setting the string" );
-        }
+        this.setText( "" );
     }
 
     @Override
-    public void keyReleased ( KeyEvent _e )
+    public void mousePressed ( MouseEvent _e )
+    {
+        this.setText( "" );
+    }
+
+    @Override
+    public void mouseEntered ( MouseEvent _e )
     {
     }
 
     @Override
-    public void keyTyped ( KeyEvent _e )
+    public void mouseExited ( MouseEvent _e )
+    {
+    }
+
+    @Override
+    public void mouseReleased ( MouseEvent _e )
     {
     }
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.awt.Graphics;
@@ -10,12 +5,15 @@ import javax.swing.JLabel;
 import view.MainWindow;
 
 /**
+ * This class represents the label in the bottom-right corner of the screen,
+ * letting the user know when the parsing is complete, and if the string is
+ * accepted or not.
  *
  * @author Joshua
  */
 public class AcceptedStringLabel extends JLabel
 {
-    private MainWindow mainWindow;
+    private final MainWindow mainWindow;
 
     public AcceptedStringLabel ( MainWindow window )
     {
@@ -27,7 +25,10 @@ public class AcceptedStringLabel extends JLabel
     public void paintComponent ( Graphics g )
     {
         super.paintComponent( g );
-        this.setText( "String accepted?: " + this.mainWindow.dpda.isCurrentStateFinal());
-        this.mainWindow.buttonPanel.repaint();
+        String color = this.mainWindow.getDpda().isCurrentStateFinal() ? "green" : "red";
+        String symbol = this.mainWindow.getDpda().doneParsing() ? "\u2713" : "\u0058";
+        this.setText( String.format( "<html><font size='5'>%s<font color='%s'>%B</font>&nbsp;%s</html>",
+                "String Accepted: ", color, this.mainWindow.getDpda().isCurrentStateFinal(), symbol ) );
+        this.mainWindow.getButtonPanel().repaint();
     }
 }

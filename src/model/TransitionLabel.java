@@ -1,42 +1,46 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JLabel;
 import view.MainWindow;
 
 /**
+ * This text displays, at the top-center of the screen, what transition just
+ * occurred in the graph.
  *
  * @author Joshua
  */
 public class TransitionLabel extends JLabel
 {
-
-    private MainWindow mainWindow;
+    private final MainWindow mainWindow;
 
     public TransitionLabel ( MainWindow window )
     {
-        super.setText( "DPDA Parser" );
         this.mainWindow = window;
+        this.setText( "DPDA Parser" );
+        this.setHorizontalAlignment( JLabel.CENTER );
     }
 
     @Override
     public void paintComponent ( Graphics g )
     {
         super.paintComponent( g );
-        if ( this.mainWindow.dpda.inputString == null || this.mainWindow.dpda.currTrans == null )
+        this.setFont( new Font( "Dialog", Font.TRUETYPE_FONT, 16 ) );
+
+        if ( this.mainWindow.getDpda().getInputString() == null
+                || this.mainWindow.getDpda().getCurrTrans() == null )
         {
             this.setText( "DPDA Parser" );
         }
         else
         {
-            this.setText( "String: " + this.mainWindow.dpda.inputString + ", "
-                    + this.mainWindow.dpda.currTrans + ", current string: "
-                    + this.mainWindow.dpda.inputString.substring( this.mainWindow.dpda.charPos ) );
+            this.setText( "Transition: " + this.mainWindow.getDpda().getCurrTrans() );
         }
+    }
+
+    public void resetText ()
+    {
+        this.setText( "DPDA Parser" );
     }
 }

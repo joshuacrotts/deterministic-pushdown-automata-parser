@@ -1,6 +1,7 @@
 package dpda;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import model.CircleComponent;
@@ -15,7 +16,6 @@ import model.CircleComponent;
  */
 public class Transition
 {
-
     private final DPDA dpda;
     private final int fromState;
     private final int toStateID;
@@ -26,7 +26,9 @@ public class Transition
 
     private int yOffset = 0;
 
-    public Transition ( DPDA dpda , int fromState , int toStateID , char inputSymbol , char popChar , char pushChar )
+    public static final char EPSILON = '\u03b5';
+
+    public Transition ( DPDA dpda, int fromState, int toStateID, char inputSymbol, char popChar, char pushChar )
     {
         this.dpda = dpda;
         this.fromState = fromState;
@@ -44,15 +46,28 @@ public class Transition
         CircleComponent srcState = this.dpda.getStateObject( fromState ).getCircleComponent();
         CircleComponent destState = this.dpda.getStateObject( toStateID ).getCircleComponent();
 
-        g2.drawLine( srcState.getX() + srcState.getWidth() ,
-                srcState.getY() + srcState.getWidth() ,
-                destState.getX() + srcState.getWidth() ,
+        g2.drawLine( srcState.getX() + srcState.getWidth(),
+                srcState.getY() + srcState.getWidth(),
+                destState.getX() + srcState.getWidth(),
                 destState.getY() + srcState.getWidth() );
 
-        int midPointX = ( srcState.getX() + destState.getX() ) >> 1;
-        int midPointY = ( srcState.getY() + destState.getY() ) >> 1;
+        int midPointX = ( ( srcState.getX() + destState.getX() ) >> 1 ) + ( int ) ( srcState.getWidth() * 2 );
+        int midPointY = ( ( srcState.getY() + destState.getY() ) >> 1 ) + ( srcState.getHeight() >> 1 );
 
-        g2.drawString( this.inputSymbol + ", " + this.popChar + " -> " + this.pushChar , midPointX , midPointY + yOffset );
+        //  Just to make it look pretty, we can draw the transitions on the
+        //  lines of the DPDA. Further, we replace the "e" to an actual epsilon
+        //  symbol in unicode.
+        this.drawTransitionText( g2, midPointX, midPointY );
+    }
+
+    private void drawTransitionText ( Graphics2D g2, int midPointX, int midPointY )
+    {
+        g2.setColor( Color.BLACK );
+        Font oldFont = g2.getFont();
+        g2.setFont( new Font( "Arial", Font.TRUETYPE_FONT, 15 ) );
+        String epsilonReplacedStr = ( this.inputSymbol + ", " + this.popChar + " \u2192 " + this.pushChar ).replaceAll( "e", "\u03b5" );
+        g2.drawString( epsilonReplacedStr, midPointX, midPointY + yOffset );
+        g2.setFont( oldFont );
     }
 
     public int getFromState ()
@@ -104,13 +119,13 @@ public class Transition
     public String toString ()
     {
         return "Transition from State "
-                + this.fromState
+                + ( this.fromState == 'e' ? EPSILON : fromState )
                 + " to State "
                 + this.toStateID + ": \t\t"
-                + inputSymbol
+                + ( inputSymbol == 'e' ? EPSILON : inputSymbol )
                 + ", "
-                + this.popChar
-                + " -> "
-                + this.pushChar;
+                + ( this.popChar == 'e' ? EPSILON : this.popChar )
+                + " \u2192 "
+                + ( this.pushChar == 'e' ? EPSILON : this.pushChar );
     }
 }

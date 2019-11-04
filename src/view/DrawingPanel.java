@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import dpda.Transition;
@@ -14,21 +9,23 @@ import javax.swing.JPanel;
 import model.CircleComponent;
 
 /**
+ * This class is the panel for the main view of the window; it shows the
+ * transitions, and states for the corresponding DPDA.
  *
  * @author Joshua
  */
 public class DrawingPanel extends JPanel
 {
+    private final MainWindow mainFrame;
+    private final StackView stackView;
 
-    private MainWindow mainFrame;
     private ArrayList<CircleComponent> circles;
-    private StackView stackView;
 
     public DrawingPanel ( MainWindow frame )
     {
         this.mainFrame = frame;
         this.stackView = new StackView( mainFrame );
-        this.addCircles( this.mainFrame.dpda.getNumberOfStates() );
+        this.addCircles( this.mainFrame.getDpda().getNumberOfStates() );
         this.setBackground( Color.WHITE );
     }
 
@@ -47,9 +44,9 @@ public class DrawingPanel extends JPanel
 
     public void drawTransitions ( Graphics g )
     {
-        for ( int i = 0 ; i < this.mainFrame.dpda.getNumberOfStates() ; i++ )
+        for ( int i = 0 ; i < this.mainFrame.getDpda().getNumberOfStates() ; i++ )
         {
-            List<Transition> transitions = this.mainFrame.dpda.getStateObject( i + 1 ).getTransitions();
+            List<Transition> transitions = this.mainFrame.getDpda().getStateObject( i + 1 ).getTransitions();
             if ( transitions == null )
             {
                 return;
@@ -85,9 +82,8 @@ public class DrawingPanel extends JPanel
             angle = i * angleFactor;
             double x = originX + radius * Math.cos( angle );
             double y = originY + radius * Math.sin( angle );
-            System.out.println( "x: " + x + " y: " + y + " angle: " + angle );
-            System.out.println( this.mainFrame.dpda.getStateObject( i + 1 ) );
-            this.circles.add( new CircleComponent( this , ( int ) x , ( int ) y , this.mainFrame.dpda.getStateObject( i + 1 ) ) );
+            this.circles.add( new CircleComponent( this, ( int ) x, ( int ) y,
+                    this.mainFrame.getDpda().getStateObject( i + 1 ) ) );
         }
     }
 }

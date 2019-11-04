@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import view.MainWindow;
@@ -18,26 +16,12 @@ import view.MainWindow;
  */
 public class DPDAParser
 {
-
     private static BufferedReader lineReader;
-    private static Scanner keyboard = new Scanner( System.in );
 
     public static void main ( String[] args )
     {
         DPDA dpda = createDPDA( "dpda1.txt" );
         MainWindow mainWindow = new MainWindow( dpda );
-        System.out.println( "Alphabet is: " + Arrays.toString( dpda.getAlphabet() ) );
-        System.out.print( "Enter your string: " );
-        String str = keyboard.nextLine();
-        if ( dpda.acceptsString( str ) )
-        {
-            System.out.println( "The string " + str + " is accepted." );
-        }
-        else
-        {
-            System.out.println( "The string " + str + " is not accepted." );
-
-        }
     }
 
     private static DPDA createDPDA ( String fileName )
@@ -88,7 +72,7 @@ public class DPDAParser
         catch ( IOException ex )
         {
             Logger.getLogger( DPDAParser.class
-                    .getName() ).log( Level.SEVERE , null , ex );
+                    .getName() ).log( Level.SEVERE, null, ex );
         }
 
         //  Read in the number of states.
@@ -149,7 +133,7 @@ public class DPDAParser
 
                 //  Get the state from the DPDA and add its transition values.
                 State state = dpda.getStateObject( currentStateID );
-                state.addTransition( dpda , currentStateID , nextStateID , inputSymbol , popSymbol , pushSymbol );
+                state.addTransition( dpda, currentStateID, nextStateID, inputSymbol, popSymbol, pushSymbol );
             }
             while ( !line.contains( "Transitions end" ) );
 
@@ -157,7 +141,7 @@ public class DPDAParser
         catch ( IOException ex )
         {
             Logger.getLogger( DPDAParser.class
-                    .getName() ).log( Level.SEVERE , null , ex );
+                    .getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
@@ -179,7 +163,7 @@ public class DPDAParser
         catch ( IOException ex )
         {
             Logger.getLogger( DPDAParser.class
-                    .getName() ).log( Level.SEVERE , null , ex );
+                    .getName() ).log( Level.SEVERE, null, ex );
         }
 
         if ( !line.contains( "Start state:" ) )
@@ -208,7 +192,7 @@ public class DPDAParser
         catch ( IOException ex )
         {
             Logger.getLogger( DPDAParser.class
-                    .getName() ).log( Level.SEVERE , null , ex );
+                    .getName() ).log( Level.SEVERE, null, ex );
         }
 
         if ( !line.contains( "Accept states:" ) )
@@ -240,7 +224,7 @@ public class DPDAParser
         catch ( IOException ex )
         {
             Logger.getLogger( DPDAParser.class
-                    .getName() ).log( Level.SEVERE , null , ex );
+                    .getName() ).log( Level.SEVERE, null, ex );
         }
 
         if ( !line.contains( "Alphabet:" ) )
