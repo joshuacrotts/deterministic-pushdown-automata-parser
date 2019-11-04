@@ -27,7 +27,7 @@ public class AcceptedStringLabel extends JLabel
         super.paintComponent( g );
         String color = this.mainWindow.getDpda().isCurrentStateFinal() ? "green" : "red";
         String symbol = this.mainWindow.getDpda().doneParsing() ? "\u2713" : "\u0058";
-        this.setText( String.format( "<html><font size='5'>%s<font color='%s'>%B</font>&nbsp;%s</html>",
+        this.setText( String.format( "<html><font size='3'>%s<font color='%s'>%B</font>&nbsp;%s</html>",
                 "String Accepted: ", color, this.mainWindow.getDpda().isCurrentStateFinal(), symbol ) );
         this.mainWindow.getButtonPanel().repaint();
     }
