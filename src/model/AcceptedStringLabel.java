@@ -29,6 +29,7 @@ public class AcceptedStringLabel extends JLabel
         String symbol = this.mainWindow.getDpda().doneParsing() ? "\u2713" : "\u0058";
         this.setText( String.format( "<html><font size='3'>%s<font color='%s'>%B</font>&nbsp;%s</html>",
                 "String Accepted: ", color, this.mainWindow.getDpda().isCurrentStateFinal(), symbol ) );
+        this.mainWindow.getButtonPanel().getStepButton().setEnabled( !this.mainWindow.getDpda().doneParsing() || this.mainWindow.getDpda().hasEpsilonTransition() );
         this.mainWindow.getButtonPanel().repaint();
     }
 }

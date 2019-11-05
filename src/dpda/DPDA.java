@@ -45,6 +45,7 @@ public class DPDA
     private List<Transition> currTransList;
     private Transition currTrans;
     private String inputString;
+    private boolean hasEpsilonTransition = true;
 
     public DPDA ( int numOfStates )
     {
@@ -78,6 +79,7 @@ public class DPDA
                         && t.getPopSymbol() == '$'
                         && this.peek() == t.getPopSymbol() )
                 {
+                    this.hasEpsilonTransition = false;
                     t.setVisited( true );
                     this.setCurrTrans( t );
                     this.currState = this.getStateObject( t.getToStateID() );
@@ -86,7 +88,7 @@ public class DPDA
                     return true;
                 }
             }
-
+            this.hasEpsilonTransition = false;
             return false;
         }
 
@@ -111,7 +113,6 @@ public class DPDA
                     && ( this.getInputString().charAt( this.getCharPos() ) == this.currTransList.get( t ).getInputSymbol() || this.currTransList.get( t ).getInputSymbol() == 'e' )
                     && ( ( !this.stack.isEmpty() && this.stack.peek() == this.currTransList.get( t ).getPopSymbol() ) || this.currTransList.get( t ).getPopSymbol() == 'e' ) )
             {
-
                 accepts = true;
                 break;
             }
@@ -215,7 +216,6 @@ public class DPDA
             //  If none of the rules above are satisifed, we automatically reject.
             if ( !accepts )
             {
-                System.out.println( "Not accepted." );
                 return false;
             }
 
@@ -368,6 +368,7 @@ public class DPDA
         this.currTransList = null;
         this.setCurrTrans( null );
         this.currState = null;
+        this.hasEpsilonTransition = true;
         this.setCharPos( 0 );
     }
 
@@ -472,5 +473,10 @@ public class DPDA
     public void setInputString ( String inputString )
     {
         this.inputString = inputString;
+    }
+
+    public boolean hasEpsilonTransition ()
+    {
+        return this.hasEpsilonTransition;
     }
 }

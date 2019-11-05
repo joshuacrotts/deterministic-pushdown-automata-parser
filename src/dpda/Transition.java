@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.QuadCurve2D;
 import model.CircleComponent;
 
 /**
@@ -16,6 +17,7 @@ import model.CircleComponent;
  */
 public class Transition
 {
+    //  Transition information regarding the DPDA moves.
     private final DPDA dpda;
     private final int fromState;
     private final int toStateID;
@@ -24,7 +26,10 @@ public class Transition
     private final char pushChar;
     private boolean visited = false;
 
+    //  Positioning information for tbe bend in the arcs.
     private int yOffset = 0;
+    private static final int DEFAULT_Y_OFFSET = 20;
+    private static final double BEND_POS_OFFSET_FACTOR = 1.5;
 
     public static final char EPSILON = '\u03b5';
 
@@ -42,17 +47,23 @@ public class Transition
     {
         Graphics2D g2 = ( Graphics2D ) g;
         g2.setColor( this.visited ? Color.BLUE : Color.BLACK );
+        CircleComponent srcState = this.dpda.getStateObject( this.fromState ).getCircleComponent();
+        CircleComponent destState = this.dpda.getStateObject( this.toStateID ).getCircleComponent();
 
-        CircleComponent srcState = this.dpda.getStateObject( fromState ).getCircleComponent();
-        CircleComponent destState = this.dpda.getStateObject( toStateID ).getCircleComponent();
+        QuadCurve2D line = new QuadCurve2D.Double();
 
-        g2.drawLine( srcState.getX() + srcState.getWidth(),
-                srcState.getY() + srcState.getWidth(),
+        int midPointX = ( ( srcState.getX() + destState.getX() ) >> 1 ) + ( srcState.getWidth() << 1 );
+        int midPointY = ( ( srcState.getY() + destState.getY() ) >> 1 ) + ( srcState.getHeight() >> 1 );
+
+        int bendPointOffset = this.yOffset == 0 ? -Transition.DEFAULT_Y_OFFSET : this.yOffset;
+
+        line.setCurve( srcState.getX() + srcState.getWidth(),
+                srcState.getY() + srcState.getWidth(), midPointX,
+                midPointY + bendPointOffset * Transition.BEND_POS_OFFSET_FACTOR,
                 destState.getX() + srcState.getWidth(),
                 destState.getY() + srcState.getWidth() );
 
-        int midPointX = ( ( srcState.getX() + destState.getX() ) >> 1 ) + ( int ) ( srcState.getWidth() * 2 );
-        int midPointY = ( ( srcState.getY() + destState.getY() ) >> 1 ) + ( srcState.getHeight() >> 1 );
+        g2.draw( line );
 
         //  Just to make it look pretty, we can draw the transitions on the
         //  lines of the DPDA. Further, we replace the "e" to an actual epsilon
