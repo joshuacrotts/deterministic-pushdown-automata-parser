@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.CubicCurve2D;
 import java.awt.geom.QuadCurve2D;
 import model.CircleComponent;
 
@@ -30,6 +31,8 @@ public class Transition
     private int yOffset = 0;
     private static final int DEFAULT_Y_OFFSET = 20;
     private static final double BEND_POS_OFFSET_FACTOR = 1.5;
+    private static final int CUBIC_X_OFFSET = 65;
+    private static final int CUBIC_Y_OFFSET = 75;
 
     public static final char EPSILON = '\u03b5';
 
@@ -50,25 +53,47 @@ public class Transition
         CircleComponent srcState = this.dpda.getStateObject( this.fromState ).getCircleComponent();
         CircleComponent destState = this.dpda.getStateObject( this.toStateID ).getCircleComponent();
 
-        QuadCurve2D line = new QuadCurve2D.Double();
-
-        int midPointX = ( ( srcState.getX() + destState.getX() ) >> 1 ) + ( srcState.getWidth() << 1 );
-        int midPointY = ( ( srcState.getY() + destState.getY() ) >> 1 ) + ( srcState.getHeight() >> 1 );
+        //  Calculates the mid point of the line.
+        int lineMidPointX = ( ( srcState.getX() + destState.getX() ) >> 1 ) + ( srcState.getWidth() << 1 );
+        int lineMidPointY = ( ( srcState.getY() + destState.getY() ) >> 1 ) + ( srcState.getHeight() >> 1 );
 
         int bendPointOffset = this.yOffset == 0 ? -Transition.DEFAULT_Y_OFFSET : this.yOffset;
 
-        line.setCurve( srcState.getX() + srcState.getWidth(),
-                srcState.getY() + srcState.getWidth(), midPointX,
-                midPointY + bendPointOffset * Transition.BEND_POS_OFFSET_FACTOR,
-                destState.getX() + srcState.getWidth(),
-                destState.getY() + srcState.getWidth() );
+        //  If there is NOT a cycle on this transition...
+        if ( this.fromState != this.toStateID )
+        {
+            QuadCurve2D line = new QuadCurve2D.Double();
 
-        g2.draw( line );
+            line.setCurve( srcState.getX() + srcState.getWidth(),
+                    srcState.getY() + srcState.getHeight(), lineMidPointX,
+                    lineMidPointY + bendPointOffset * Transition.BEND_POS_OFFSET_FACTOR,
+                    destState.getX() + srcState.getWidth(),
+                    destState.getY() + srcState.getHeight() );
+
+            g2.draw( line );
+        }
+        else
+        {
+            //  This code draws the loopback (transition goes to itself) curve.
+            //  If there are multiple transitions to the state from itself, we
+            //  just keep increasing the curve side to differentiate between the
+            //  transitions. It's not pretty, but it works.
+            CubicCurve2D line = new CubicCurve2D.Double();
+
+            int stateMidX = srcState.getX() + srcState.getWidth();
+            int stateMidY = srcState.getY() + srcState.getHeight();
+
+            line.setCurve( stateMidX, stateMidY, stateMidX - ( CUBIC_X_OFFSET + bendPointOffset ),
+                    stateMidY - ( CUBIC_Y_OFFSET + bendPointOffset ), stateMidX + ( CUBIC_X_OFFSET + bendPointOffset ),
+                    stateMidY - ( CUBIC_Y_OFFSET + bendPointOffset ), stateMidX, stateMidY );
+
+            g2.draw( line );
+        }
 
         //  Just to make it look pretty, we can draw the transitions on the
         //  lines of the DPDA. Further, we replace the "e" to an actual epsilon
         //  symbol in unicode.
-        this.drawTransitionText( g2, midPointX, midPointY );
+        this.drawTransitionText( g2, lineMidPointX, lineMidPointY );
     }
 
     private void drawTransitionText ( Graphics2D g2, int midPointX, int midPointY )

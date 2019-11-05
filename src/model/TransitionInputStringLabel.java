@@ -13,7 +13,6 @@ import view.MainWindow;
  */
 public class TransitionInputStringLabel extends JLabel
 {
-
     private MainWindow mainWindow;
 
     public TransitionInputStringLabel ( MainWindow window )
