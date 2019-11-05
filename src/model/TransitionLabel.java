@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ public class TransitionLabel extends JLabel
     {
         this.mainWindow = window;
         this.setText( "DPDA Parser" );
+        this.setForeground( Color.WHITE );
         this.setHorizontalAlignment( JLabel.CENTER );
     }
 

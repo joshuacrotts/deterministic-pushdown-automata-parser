@@ -1,6 +1,7 @@
 package model;
 
 import dpda.Transition;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JLabel;
@@ -19,6 +20,7 @@ public class TransitionCurrentStringLabel extends JLabel
     {
         this.mainWindow = window;
         this.setText( " " );
+        this.setForeground( Color.WHITE );
     }
 
     @Override

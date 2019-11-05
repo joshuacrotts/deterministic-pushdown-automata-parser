@@ -67,7 +67,7 @@ public class DPDA
             this.setCharPos( this.getInputString().length() - 1 );
             return false;
         }
-        if ( this.getCharPos() >= this.getInputString().length() )
+        else if ( this.getCharPos() >= this.getInputString().length() )
         {
             //  If there is one more transition left, we can just brute-force
             //  search for it until we hit it.
@@ -79,12 +79,14 @@ public class DPDA
                         && t.getPopSymbol() == '$'
                         && this.peek() == t.getPopSymbol() )
                 {
-                    this.hasEpsilonTransition = false;
                     t.setVisited( true );
+                    this.hasEpsilonTransition = false;
                     this.setCurrTrans( t );
                     this.currState = this.getStateObject( t.getToStateID() );
                     this.currState.setCurrent( true );
                     this.deselectAllStates( this.currState );
+                    this.pop();
+
                     return true;
                 }
             }

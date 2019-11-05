@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -19,6 +20,7 @@ public class TransitionInputStringLabel extends JLabel
     {
         this.mainWindow = window;
         this.setText( " " );
+        this.setForeground( Color.WHITE );
         this.setLayout( new FlowLayout( FlowLayout.LEFT ) );
 
     }
