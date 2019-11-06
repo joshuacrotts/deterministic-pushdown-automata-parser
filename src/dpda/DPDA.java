@@ -9,8 +9,7 @@ import java.util.Stack;
  *
  * @author Joshua
  */
-public class DPDA
-{
+public class DPDA {
 
     //
     //  Char for the alphabet to verify the user
@@ -47,44 +46,64 @@ public class DPDA
     private String inputString;
     private boolean hasEpsilonTransition = true;
 
-    public DPDA ( int numOfStates )
-    {
+    public DPDA(int numOfStates) {
         this.stack = new Stack<>();
         this.states = new ArrayList<>();
         this.acceptingStates = new ArrayList<>();
 
-        for ( int i = 0 ; i < numOfStates ; i++ )
-        {
-            this.states.add( new State( ( i + 1 ) ) );
+        for (int i = 0; i < numOfStates; i++) {
+            this.states.add(new State((i + 1)));
         }
-        this.states.get( 0 ).setCurrent( true );
+        this.states.get(0).setCurrent(true);
     }
 
-    public boolean stepString ()
-    {
-        if ( !this.hasValidSymbols( this.inputString ) )
-        {
-            this.setCharPos( this.getInputString().length() - 1 );
+    /**
+     * Indicates one step in a DPDA transition. We take the current string, and
+     * parse it one character at a time until there are no more chars to parse.
+     *
+     * @return
+     */
+    public boolean stepString() {
+        //  Firstly, we go ahead and initialize a blank state to the starting one.
+        if (this.currState == null) {
+            this.currState = this.startState;
+        }
+
+        //  Next, if we don't have valid chars in the input string, just return false.
+        if (!this.hasValidSymbols(this.inputString)) {
+            this.setCharPos(this.getInputString().length() - 1);
             return false;
         }
-        else if ( this.getCharPos() >= this.getInputString().length() )
-        {
+
+        //  If we're at the end of our string, go here.
+        //  There are two possible outcomes: 
+        //  1. The string had zero chars to begin with and we check if the 
+        //     start state is an accepting state.
+        //  2. The string has > 0 chars, and we need to check and see if there
+        //     exists an epsilon transition on the state that we're currently
+        //     standing on. If there is, go to the next state.
+        if (this.getCharPos() >= this.getInputString().length()) {
+
+            //  Then, if we're currently ON the start state AND the start state is an accepting state
+            //  IFF the string is empty, return true.
+            if (this.currState == this.startState && this.acceptingStates.contains(this.startState)) {
+                return true;
+            }
+
             //  If there is one more transition left, we can just brute-force
             //  search for it until we hit it.
             this.currTransList = this.currState.getTransitions();
-            for ( Transition t : this.currTransList )
-            {
-                if ( currState.getStateID() + 1 == t.getToStateID()
+            for (Transition t : this.currTransList) {
+                if (currState.getStateID() + 1 == t.getToStateID()
                         && t.getInputSymbol() == 'e'
                         && t.getPopSymbol() == '$'
-                        && this.peek() == t.getPopSymbol() )
-                {
-                    t.setVisited( true );
+                        && this.peek() == t.getPopSymbol()) {
+                    t.setVisited(true);
                     this.hasEpsilonTransition = false;
-                    this.setCurrTrans( t );
-                    this.currState = this.getStateObject( t.getToStateID() );
-                    this.currState.setCurrent( true );
-                    this.deselectAllStates( this.currState );
+                    this.setCurrTrans(t);
+                    this.currState = this.getStateObject(t.getToStateID());
+                    this.currState.setCurrent(true);
+                    this.deselectAllStates(this.currState);
                     this.pop();
 
                     return true;
@@ -92,11 +111,6 @@ public class DPDA
             }
             this.hasEpsilonTransition = false;
             return false;
-        }
-
-        if ( this.currState == null )
-        {
-            this.currState = this.startState;
         }
 
         boolean accepts = false;
@@ -109,12 +123,10 @@ public class DPDA
         //  For every rule in the transition table, we need to verify
         //  that the state we're on, as well as the stack and the
         //  input char meet a certain criteria.
-        for ( t = 0 ; t < this.currTransList.size() ; t++ )
-        {
-            if ( this.currState == this.getStateObject( this.currTransList.get( t ).getFromState() )
-                    && ( this.getInputString().charAt( this.getCharPos() ) == this.currTransList.get( t ).getInputSymbol() || this.currTransList.get( t ).getInputSymbol() == 'e' )
-                    && ( ( !this.stack.isEmpty() && this.stack.peek() == this.currTransList.get( t ).getPopSymbol() ) || this.currTransList.get( t ).getPopSymbol() == 'e' ) )
-            {
+        for (t = 0; t < this.currTransList.size(); t++) {
+            if (this.currState == this.getStateObject(this.currTransList.get(t).getFromState())
+                    && (this.getInputString().charAt(this.getCharPos()) == this.currTransList.get(t).getInputSymbol() || this.currTransList.get(t).getInputSymbol() == 'e')
+                    && ((!this.stack.isEmpty() && this.stack.peek() == this.currTransList.get(t).getPopSymbol()) || this.currTransList.get(t).getPopSymbol() == 'e')) {
                 accepts = true;
                 break;
             }
@@ -123,154 +135,51 @@ public class DPDA
         //  If none of the rules above are satisifed, we automatically reject,
         //  we also indicate to the GUI that the charPos is at the end of the string,
         //  and thus cannot proceed any further.
-        if ( !accepts )
-        {
-            System.out.println( "Not accepted." );
-            this.setCharPos( this.inputString.length() );
+        if (!accepts) {
+            System.out.println("Not accepted.");
+            this.setCharPos(this.inputString.length());
 
             return false;
         }
 
-        this.setCurrTrans( this.currTransList.get( t ) );
+        //  Grabs the transition we just used and assigns it to our instance var.
+        this.setCurrTrans(this.currTransList.get(t));
 
         //  If the input symbol is NOT an epsilon, then we can advance the
         //  pointer in the string because this indicates we are not just
         //  transitioning in the char (we are actually either pushing or popping
         //  some other char.
-        if ( currTransList.get( t ).getInputSymbol() != 'e' )
-        {
-            setCharPos( getCharPos() + 1 );
+        if (this.currTrans.getInputSymbol() != 'e') {
+            setCharPos(getCharPos() + 1);
         }
 
         //  If we are popping, then this symbol canNOT be epsilon.
-        if ( currTransList.get( t ).getPopSymbol() != 'e' )
-        {
-            if ( !this.stack.isEmpty() )
-            {
+        if (this.currTrans.getPopSymbol() != 'e') {
+            if (!this.stack.isEmpty()) {
                 this.stack.pop();
-            }
-            else
-            {
-                System.out.println( "ERROR! Tried to pop an empty stack." );
+            } else {
+                System.out.println("ERROR! Tried to pop an empty stack.");
                 return false;
             }
         }
 
         //  Finally, we update the currentState pointer.
-        currState = this.getStateObject( currTransList.get( t ).getToStateID() );
+        this.currState = this.getStateObject(this.currTrans.getToStateID());
 
         //  We also need to update the stack to push whatever the current
         //  transition function calls for.
-        if ( currTransList.get( t ).getPushSymbol() != 'e' )
-        {
-            this.push( currTransList.get( t ).getPushSymbol() );
-        }
-        this.currTransList.get( t ).setVisited( true );
-        this.deselectAllStates( currState );
-        this.currState.setCurrent( true );
-        return this.acceptingStates.contains( currState );
-    }
-
-    /**
-     * Deterministically parses through the inputString to see if it meets the
-     * criteria for this specific deterministic pushdown automata. This is for
-     * the console-only parsing version where the user isn't allowed to go
-     * step-by-step.
-     *
-     * @param inputString
-     * @return
-     */
-    public boolean acceptsString ( String inputString )
-    {
-        if ( inputString.isEmpty() || !this.hasValidSymbols( inputString ) )
-        {
-            return false;
+        if (this.currTrans.getPushSymbol() != 'e') {
+            this.push(this.currTrans.getPushSymbol());
         }
 
-        boolean accepts = false;
-        State currentState = this.startState;
-        List<Transition> transitions = null;
-        Transition transition = null;
-
-        //  Loop through each character in the string.
-        for ( int i = 0 ; i < inputString.length() ; )
-        {
-
-            //  For each character, grab its corresponding state
-            //  transition function key/values.
-            transitions = currentState.getTransitions();
-            int t;
-
-            //  For every rule in the transition table, we need to verify
-            //  that the state we're on, as well as the stack and the
-            //  input char meet a certain criteria.
-            for ( t = 0 ; t < transitions.size() ; t++ )
-            {
-                if ( currentState == this.getStateObject( transitions.get( t ).getFromState() )
-                        && ( inputString.charAt( i ) == transitions.get( t ).getInputSymbol() || transitions.get( t ).getInputSymbol() == 'e' )
-                        && ( ( !this.stack.isEmpty() && this.stack.peek() == transitions.get( t ).getPopSymbol() ) || transitions.get( t ).getPopSymbol() == 'e' ) )
-                {
-                    accepts = true;
-                    break;
-                }
-            }
-
-            //  If none of the rules above are satisifed, we automatically reject.
-            if ( !accepts )
-            {
-                return false;
-            }
-
-            //  If the input symbol is NOT an epsilon, then we can advance the
-            //  pointer in the string because this indicates we are not just
-            //  transitioning in the char (we are actually either pushing or popping
-            //  some other char.
-            if ( transitions.get( t ).getInputSymbol() != 'e' )
-            {
-                i++;
-            }
-
-            //  If we are popping, then this symbol canNOT be epsilon.
-            if ( transitions.get( t ).getPopSymbol() != 'e' )
-            {
-                if ( !this.stack.isEmpty() )
-                {
-                    this.stack.pop();
-                }
-                else
-                {
-                    System.out.println( "ERROR! Tried to pop an empty stack." );
-                    return false;
-                }
-            }
-
-            //  Finally, we update the currentState pointer.
-            currentState = this.getStateObject( transitions.get( t ).getToStateID() );
-
-            //  We also need to update the stack to push whatever the current
-            //  transition function calls for.
-            if ( transitions.get( t ).getPushSymbol() != 'e' )
-            {
-                this.push( transitions.get( t ).getPushSymbol() );
-            }
-        }
-
-        //  If there is one more transition left, we can just brute-force
-        //  search for it until we hit it.
-        transitions = currentState.getTransitions();
-
-        for ( Transition t : transitions )
-        {
-            if ( currentState.getStateID() + 1 == t.getToStateID()
-                    && t.getInputSymbol() == 'e'
-                    && t.getPopSymbol() == '$'
-                    && this.peek() == t.getPopSymbol() )
-            {
-                return true;
-            }
-        }
-
-        return this.acceptingStates.contains( currentState );
+        //  Sets the current transition to have been visited (thus marking it
+        //  with a blue line to signify the path, deselects every node in the 
+        //  graph and sets the current one to the orange color. Finally,
+        //  we check to see if it's a final state.
+        this.currTransList.get(t).setVisited(true);
+        this.deselectAllStates(currState);
+        this.currState.setCurrent(true);
+        return this.acceptingStates.contains(currState);
     }
 
     /**
@@ -282,19 +191,15 @@ public class DPDA
      * @param s
      * @return
      */
-    public boolean hasValidSymbols ( String s )
-    {
+    public boolean hasValidSymbols(String s) {
         boolean hasValidChars;
 
-        for ( int i = 0 ; i < s.length() ; i++ )
-        {
+        for (int i = 0; i < s.length(); i++) {
             hasValidChars = false;
-            char c = s.charAt( i );
+            char c = s.charAt(i);
 
-            for ( int j = 0 ; j < this.alphabet.length ; j++ )
-            {
-                if ( s.charAt( i ) == this.alphabet[ j ] )
-                {
+            for (int j = 0; j < this.alphabet.length; j++) {
+                if (s.charAt(i) == this.alphabet[j]) {
                     //
                     //  If we find a matching character, we know we're good
                     //  for this char in the string.
@@ -305,8 +210,7 @@ public class DPDA
             }
 
             //  If we don't find a match, return false early.
-            if ( !hasValidChars )
-            {
+            if (!hasValidChars) {
                 return false;
             }
         }
@@ -314,64 +218,56 @@ public class DPDA
         return true;
     }
 
-    public char peek ()
-    {
+    public char peek() {
         return stack.peek();
     }
 
-    public char pop ()
-    {
+    public char pop() {
         return stack.pop();
     }
 
-    public void push ( char ch )
-    {
-        this.stack.push( ch );
+    public void push(char ch) {
+        this.stack.push(ch);
     }
 
-    public State getStateObject ( int stateID )
-    {
-        for ( int i = 0 ; i < states.size() ; i++ )
-        {
-            State state = states.get( i );
-            if ( state.getStateID() == stateID )
-            {
+    public State getStateObject(int stateID) {
+        for (int i = 0; i < states.size(); i++) {
+            State state = states.get(i);
+            if (state.getStateID() == stateID) {
                 return state;
             }
         }
         return null;
     }
 
-    private void deselectAllStates ( State currState )
-    {
-        for ( int i = 0 ; i < this.states.size() ; i++ )
-        {
-            if ( currState != this.states.get( i ) )
-            {
-                this.states.get( i ).setCurrent( false );
+    private void deselectAllStates(State currState) {
+        for (int i = 0; i < this.states.size(); i++) {
+            if (currState != this.states.get(i)) {
+                this.states.get(i).setCurrent(false);
             }
         }
     }
 
-    public void resetDPDA ()
-    {
+    /**
+     * Clears the stack, removes all blue transition lines, and sets the current
+     * state to be the starting state.
+     */
+    public void resetDPDA() {
         this.stack.clear();
-        for ( State s : states )
-        {
-            s.setCurrent( false );
+        for (State s : states) {
+            s.setCurrent(false);
             List<Transition> transitions = s.getTransitions();
-            for ( Transition t : transitions )
-            {
-                t.setVisited( false );
+            for (Transition t : transitions) {
+                t.setVisited(false);
             }
         }
 
-        this.states.get( 0 ).setCurrent( true );
+        this.states.get(0).setCurrent(true);
         this.currTransList = null;
-        this.setCurrTrans( null );
+        this.setCurrTrans(null);
         this.currState = null;
         this.hasEpsilonTransition = true;
-        this.setCharPos( 0 );
+        this.setCharPos(0);
     }
 
     /**
@@ -380,105 +276,88 @@ public class DPDA
      *
      * @return
      */
-    public boolean doneParsing ()
-    {
-        if ( this.getInputString() == null )
-        {
+    public boolean doneParsing() {
+        if (this.getInputString() == null) {
             return false;
         }
-        return this.getInputString().substring( getCharPos() ).isEmpty();
+        return this.getInputString().substring(getCharPos()).isEmpty();
     }
 
-    public Stack<Character> getStack ()
-    {
+    public Stack<Character> getStack() {
         return this.stack;
     }
 
-    public int getStackSize ()
-    {
+    public int getStackSize() {
         return this.stack.size();
     }
 
-    public int getNumberOfStates ()
-    {
+    public int getNumberOfStates() {
         return this.states.size();
     }
 
-    public void setAlphabet ( char[] alphabet )
-    {
+    public void setAlphabet(char[] alphabet) {
         this.alphabet = alphabet;
     }
 
-    public char[] getAlphabet ()
-    {
+    public char[] getAlphabet() {
         return this.alphabet;
     }
 
-    public void setStartState ( int stateID )
-    {
-        this.startState = this.getStateObject( stateID );
+    public void setStartState(int stateID) {
+        this.startState = this.getStateObject(stateID);
     }
 
-    public void setFinalStates ( ArrayList<State> finalStates )
-    {
+    public void setFinalStates(ArrayList<State> finalStates) {
         this.acceptingStates = finalStates;
     }
 
-    public boolean isCurrentStateFinal ()
-    {
-        return this.acceptingStates.contains( this.currState );
+    public boolean isCurrentStateFinal() {
+        return this.acceptingStates.contains(this.currState);
     }
 
     /**
      * @return the charPos
      */
-    public int getCharPos ()
-    {
+    public int getCharPos() {
         return charPos;
     }
 
     /**
      * @param charPos the charPos to set
      */
-    public void setCharPos ( int charPos )
-    {
+    public void setCharPos(int charPos) {
         this.charPos = charPos;
     }
 
     /**
      * @return the currTrans
      */
-    public Transition getCurrTrans ()
-    {
+    public Transition getCurrTrans() {
         return currTrans;
     }
 
     /**
      * @param currTrans the currTrans to set
      */
-    public void setCurrTrans ( Transition currTrans )
-    {
+    public void setCurrTrans(Transition currTrans) {
         this.currTrans = currTrans;
     }
 
     /**
      * @return the inputString
      */
-    public String getInputString ()
-    {
+    public String getInputString() {
         return inputString;
     }
 
     /**
      * @param inputString the inputString to set
      */
-    public void setInputString ( String inputString )
-    {
+    public void setInputString(String inputString) {
         this.inputString = inputString;
     }
 
-    public boolean hasEpsilonTransition ()
-    {
+    public boolean hasEpsilonTransition() {
         return this.hasEpsilonTransition;
     }
 }
